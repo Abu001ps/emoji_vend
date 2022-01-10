@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link href="{{ url_for('static', filename='css/simple-sidebar.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="../static/../static/assets/css/styles.css">
+  
+    <script>
+              function logout_button() {
+              Swal.fire({
+                  title: '로그아웃', /*상단 타이틀*/
+                  text: '정말로 로그아웃하시겠습니까?', /*내용*/
+                  icon: 'success', /*아이콘 타입*/
+                  showCancelButton: true,
+                  cancelButtonColor: '#d33',
+                  confirmButtonColor: '#009900',
+                  confirmButtonText: '확인', /*확인버튼 클가*/
+                  cancelButtonText: '취소'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  window.location.href = '/logout';
+                }
+              })
+            }
+  
+            function cancel_button() {
+              Swal.fire({
+                  title: '변경 취소', /*상단 타이틀*/
+                  text: '정말로 변경 내용을 삭제하시겠습니까?', /*내용*/
+                  icon: 'warning', /*아이콘 타입*/
+                  showCancelButton: true,
+                  cancelButtonColor: '#d33',
+                  confirmButtonColor: '#009900',
+                  confirmButtonText: '확인', /*확인버튼 클가*/
+                  cancelButtonText: '취소'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  location.reload();
+                }
+              })
+            }
+  
+            function manage(){
+              if (form.roleid.value == ""){
+                  Swal.fire(
+                  '저장 불가',
+                  '역할 ID는 빈칸일 수 없습니다.',
+                  'error'
+                  );
+              }
+              else{
+                  Swal.fire({
+                      title: '저장하시겠습니까?',
+                      text: "기존 설정은 모두 삭제됩니다!",
+                      icon: 'warning',
+                      showCancelButton: true,
+                      cancelButtonColor: '#d33',
+                      confirmButtonColor: '#009900'
+                      }).then((result) => {
+                          if (result.isConfirmed){
+                              $.ajax({
+                                  url: "/setting",
+                                  type: "post",
+                                  data: $("form").serialize(),
+                              }).done(function(data) {
+                                  if (data == "ok"){
+                                      Swal.fire({
+                                      title : '저장되었습니다!',
+                                      text : '입력하신 데이터가 저장되었습니다.',
+                                      icon : "success"
+                                      });
+                                  }else{
+                                      Swal.fire(
+                                      '저장 실패',
+                                      data,
+                                      'error'
+                                      );
+                                  }
+                              });
+                          }
+                      })
+              }
+          }
+  
+    </script>
+  
+    <title>WebPanel Beta</title>
+  
+  </head>
+
+<style>
+  :root {
+    --nav--width: 92px;
+
+    /* Colores */
+    --first-color: #0c5df4;
+    --bg-color: #12192c;
+    --sub-color: #b6cefc;
+    --white-color: #fff;
+
+    /* Fuente y tipografia */
+    --body-font: 'Poppins', sans-serif;
+    --normal-font-size: 1rem;
+    --small-font-size: .875rem;
+
+    /* z index */
+    --z-fixed: 100;
+}
+
+/* BASE */
+*, ::before, ::after {
+    box-sizing: border-box;
+}
+
+body {
+    position: relative;
+    margin: 0;
+    padding: 2rem 0 0 6.75rem;
+    font-family: 'Do Hyeon', sans-serif;
+    font-size: var(--normal-font-size);
+    transition: .5s;
+}
+.body {
+    position: relative;
+    margin: 0;
+    padding: 2rem 0 0 6.75rem;
+    font-family: 'Do Hyeon', sans-serif;
+    font-size: var(--normal-font-size);
+    transition: .5s;
+}
+
+h1 {
+    margin: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* l NAV */
+.l-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--nav--width);
+    height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--white-color);
+    padding: 1.5rem 1.5rem 2rem;
+    transition: .5s;
+    z-index: var(--z-fixed);
+}
+
+/* NAV */
+.nav {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.nav__brand {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.nav__toggle {
+    font-size: 1.25rem;
+    padding: .75rem;
+    cursor: pointer;
+}
+
+.nav__logo {
+    color: var(--white-color);
+    font-weight: 600;
+}
+
+.nav__link {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    align-items: center;
+    column-gap: .75rem;
+    padding: .75rem;
+    color: var(--white-color);
+    border-radius: .5rem;
+    margin-bottom: 1rem;
+    transition: .3s;
+    cursor: pointer;
+}
+
+.nav__link:hover {
+    background-color: var(--first-color);
+}
+
+.nav__icon {
+    font-size: 1.25rem;
+}
+
+.nav_name {
+    font-size: var(--small-font-size);
+}
+
+/* Expander menu */
+.expander {
+    width: calc(var(--nav--width) + 9.25rem);
+}
+
+/* Add padding body*/
+.body-pd {
+    padding: 2rem 0 0 16rem;
+}
+
+/* Active links menu */
+.active {
+    background-color: var(--first-color);
+}
+
+/* COLLAPSE */
+.collapse {
+    grid-template-columns: 20px max-content 1fr;
+}
+
+.collapse__link {
+    justify-self: flex-end;
+    transition: .5;
+}
+
+.collapse__menu {
+    display: none;
+    padding: .75rem 2.25rem;
+}
+
+.collapse__sublink {
+    color: var(--sub-color);
+    font-size: var(--small-font-size);
+}
+
+.collapse__sublink:hover {
+    color: var(--white-color);
+}
+
+/* Show collapse */
+.showCollapse {
+    display: block;
+}
+
+/* Rotate icon */
+.rotate {
+    transform: rotate(180deg);
+    transition: .5s;
+}
+</style>
+<body id="body-pd">
+  <div class="l-navbar" id="navbar">
+      <nav class="nav">
+          <div>
+              <div class="nav__brand">
+                  <ion-icon name="menu-outline" class="nav__toggle" id="nav-toggle"></ion-icon>
+                  <span class="nav__logo">2021 VEND</span>
+              </div>
+              <div class="nav__list">
+                  <a href="/setting" class="nav__link active" title="기본설정">
+                      <ion-icon name="settings-outline" class="nav__icon"></ion-icon>
+                      <span class="nav_name">기본설정</span>
+                  </a>
+                  
+                  <a href="/manageprod" class="nav__link active" title="제품설정">
+                      <ion-icon name="cart-outline" class="nav__icon"></ion-icon>
+                      <span class="nav_name">제품설정</span>
+                  </a>
+
+                  <a href="/manageuser" class="nav__link active" title="유저설정">
+                      <ion-icon name="people-outline" class="nav__icon"></ion-icon>
+                      <span class="nav_name">유저설정</span>
+                  </a>
+
+                  <a href="/license" class="nav__link active" title="라이센스">
+                      <ion-icon name="settings-outline" class="nav__icon"></ion-icon>
+                      <span class="link-outline">라이센스</span>
+                  </a>
+              </div>
+          </div>
+      </nav>
+  </div>
+  </form>
+</div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+
+      <div class="container-fluid">
+      <div style="padding:20px;"> 
+        <br> <br>
+        <form name="form">
+        <div class="form-group">
+          <div class="card">
+            <div class="card-header">
+            문화상품권 자동충전 관련
+            </div>
+            <div class="card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6" style="padding-top : 10px;">
+                      <label for="exampleInputEmail1">컬쳐랜드 ID</label>
+                      <input class="form-control" id="cultureid" placeholder="컬쳐랜드 ID" name="cultureid" value="{{info[0]}}">
+                    </div>
+                    <div class="col-md-6" style="padding-top : 10px;">
+                      <label for="exampleInputEmail1">컬쳐랜드 PW</label>
+                      <input class="form-control" id="culturepw" placeholder="컬쳐랜드 PW" name="culturepw" value="{{info[1]}}">
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="card">
+              <div class="card-header">
+              로그 관련
+              </div>
+              <div class="card-body">
+              <div class="container">
+                  <div class="row">
+                      <div class="col-md-6" style="padding-top : 10px;">
+                        <label for="exampleInputEmail1">관리자 로그 웹훅</label>
+                        <input class="form-control" id="logwebhk" placeholder="관리자 로그 웹훅" name="logwebhk" value="{{sever[4]}}"> 
+                      </div>
+                      <div class="col-md-6" style="padding-top : 10px;">
+                        <label for="exampleInputEmail1">구매 로그 웹훅</label>
+                        <input class="form-control" id="buylogwebhk" placeholder="구매 로그 웹훅" name="buylogwebhk" value="{{sever[5]}}"> 
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </div>
+
+      <div class="form-group">
+        <div class="card">
+            <div class="card-header">
+            역할 관련
+            </div>
+            <div class="card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12" style="padding-top : 10px;">
+                      <label for="exampleInputEmail1">구매자 역할 ID</label>
+                      <input class="form-control" id="roleid" placeholder="구매자 역할 ID" name="roleid" value="{{sever[3]}}"> 
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+      </form>
+      <div style="float: right;">
+      <button class="btn btn-primary" onclick="manage();">적용하기</button>&nbsp;&nbsp;
+        <button class="btn btn-danger" onclick="cancel_button();">취소하기</button><br><br>
+        </div>
+      </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+  </div>
+  <!-- /#wrapper -->
+
+  <!-- Bootstrap core JavaScript -->
+
+  <!-- Menu Toggle Script -->
+
+<script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+<!-- JS -->
+<script src="../static/assets/js/main.js"></script>
+
+</body>
+
+</html>
