@@ -15,7 +15,7 @@ from discord_webhook import DiscordWebhook, DiscordEmbed
 import requests
 from discord.ext.commands import CommandNotFound
 
-_TOKEN_ = "OTA2MTgyMjg5ODc5MzQzMTU2.YYU6BQ.F2wpAthEp97kILC-M9P-mPufJhQ"
+_TOKEN_ = "봇 토큰"
 
 
 intents = discord.Intents.all()
